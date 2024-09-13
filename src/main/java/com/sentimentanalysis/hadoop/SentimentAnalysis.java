@@ -11,9 +11,9 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
-import java.net.URI;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -30,25 +30,47 @@ public class SentimentAnalysis {
 
         @Override
         protected void setup(Context context) throws IOException, InterruptedException {
-            // Load positive words from distributed cache
-            URI[] cacheFiles = context.getCacheFiles();
-            if (cacheFiles != null && cacheFiles.length > 0) {
-                loadWordList(cacheFiles[0], positiveWords);
-                loadWordList(cacheFiles[1], negativeWords);
-            }
+            // Load positive words from resources
+            loadWordList("positive_words.txt", positiveWords);
+
+            // Load negative words from resources
+            loadWordList("negative_words.txt", negativeWords);
         }
 
-        private void loadWordList(URI path, Set<String> wordSet) throws IOException {
-            BufferedReader reader = new BufferedReader(new FileReader(path.toString()));
-            String word;
-            while ((word = reader.readLine()) != null) {
-                wordSet.add(word.toLowerCase());
+        private void loadWordList(String fileName, Set<String> wordSet) throws IOException {
+            // Use class loader to read the file from the classpath
+            try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileName);
+                 BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+                String word;
+                while ((word = reader.readLine()) != null) {
+                    wordSet.add(word.toLowerCase());
+                }
             }
-            reader.close();
         }
 
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
+            StringTokenizer itr = new StringTokenizer(value.toString());
+            int positiveCount = 0;
+            int negativeCount = 0;
 
+            while (itr.hasMoreTokens()) {
+                String word = itr.nextToken().toLowerCase().replaceAll("[^a-zA-Z]", "");
+
+                if (positiveWords.contains(word)) {
+                    positiveCount++;
+                }
+                if (negativeWords.contains(word)) {
+                    negativeCount++;
+                }
+            }
+
+            if (positiveCount > negativeCount) {
+                reviewClass.set("Positive");
+                context.write(reviewClass, one);
+            } else if (negativeCount > positiveCount) {
+                reviewClass.set("Negative");
+                context.write(reviewClass, one);
+            }
         }
     }
 
@@ -57,7 +79,12 @@ public class SentimentAnalysis {
 
         public void reduce(Text key, Iterable<IntWritable> values, Context context)
                 throws IOException, InterruptedException {
-
+            int sum = 0;
+            for (IntWritable val : values) {
+                sum += val.get();
+            }
+            result.set(sum);
+            context.write(key, result);
         }
     }
 
@@ -71,12 +98,8 @@ public class SentimentAnalysis {
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
 
-        // Add positive and negative word lists to the distributed cache
-        job.addCacheFile(new URI("/input/dataset/positive_words.txt"));
-        job.addCacheFile(new URI("/input/dataset/negative_words.txt"));
-
-        FileInputFormat.addInputPath(job, new Path(args[0]));
-        FileOutputFormat.setOutputPath(job, new Path(args[1]));
+        FileInputFormat.addInputPath(job, new Path(args[1]));
+        FileOutputFormat.setOutputPath(job, new Path(args[2]));
 
         System.exit(job.waitForCompletion(true) ? 0 : 1);
     }
