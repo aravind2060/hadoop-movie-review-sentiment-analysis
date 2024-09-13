@@ -48,28 +48,7 @@ public class SentimentAnalysis {
         }
 
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
-            StringTokenizer itr = new StringTokenizer(value.toString());
-            int positiveCount = 0;
-            int negativeCount = 0;
 
-            while (itr.hasMoreTokens()) {
-                String word = itr.nextToken().toLowerCase().replaceAll("[^a-zA-Z]", "");
-
-                if (positiveWords.contains(word)) {
-                    positiveCount++;
-                }
-                if (negativeWords.contains(word)) {
-                    negativeCount++;
-                }
-            }
-
-            if (positiveCount > negativeCount) {
-                reviewClass.set("Positive");
-                context.write(reviewClass, one);
-            } else if (negativeCount > positiveCount) {
-                reviewClass.set("Negative");
-                context.write(reviewClass, one);
-            }
         }
     }
 
@@ -78,12 +57,7 @@ public class SentimentAnalysis {
 
         public void reduce(Text key, Iterable<IntWritable> values, Context context)
                 throws IOException, InterruptedException {
-            int sum = 0;
-            for (IntWritable val : values) {
-                sum += val.get();
-            }
-            result.set(sum);
-            context.write(key, result);
+
         }
     }
 
@@ -98,8 +72,8 @@ public class SentimentAnalysis {
         job.setOutputValueClass(IntWritable.class);
 
         // Add positive and negative word lists to the distributed cache
-        job.addCacheFile(new URI("/input/positive_words.txt"));
-        job.addCacheFile(new URI("/input/negative_words.txt"));
+        job.addCacheFile(new URI("/input/dataset/positive_words.txt"));
+        job.addCacheFile(new URI("/input/dataset/negative_words.txt"));
 
         FileInputFormat.addInputPath(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
