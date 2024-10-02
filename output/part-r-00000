@@ -1,0 +1,23 @@
+Negative	Review: The worst movie I have ever seen, a complete failure.	Positive words: []	Negative words: [worst]
+Negative	Review: I regret watching this movie, it was poorly made.	Positive words: []	Negative words: [regret]
+Negative	Review: The film failed to deliver on any front.	Positive words: []	Negative words: [failed]
+Negative	Review: The dialogue was weak, and the pacing was off.	Positive words: []	Negative words: [off, weak]
+Negative	Review: It was a complete waste of time, very disappointing.	Positive words: []	Negative words: [waste, disappointing]
+Negative	Review: A disaster from start to finish, I wouldn't recommend it to anyone.	Positive words: []	Negative words: [disaster]
+Negative	Review: I didn't enjoy the movie, it was boring and predictable.	Positive words: []	Negative words: [boring, predictable]
+Negative	Review: The direction was poor and the story was uninteresting.	Positive words: []	Negative words: [poor, uninteresting]
+Negative	Review: The plot was dull and the acting was terrible.	Positive words: []	Negative words: [dull, terrible]
+Negative	Total count: 9
+Neutral	Review: A beautifully made film with an emotional punch.	Positive words: []	Negative words: []
+Neutral	Review: The movie was too long and lacked depth.	Positive words: []	Negative words: []
+Neutral	Total count: 2
+Positive	Review: A masterpiece, the best film I’ve seen in years.	Positive words: [best, masterpiece]	Negative words: []
+Positive	Review: Brilliant performance by the lead actor, truly a masterpiece.	Positive words: [brilliant, masterpiece]	Negative words: []
+Positive	Review: Fantastic visual effects and a gripping story.	Positive words: [fantastic]	Negative words: []
+Positive	Review: Superb direction and an engaging plot, I loved it.	Positive words: [engaging, loved, superb]	Negative words: []
+Positive	Review: This movie was amazing, I loved every moment of it.	Positive words: [amazing, loved]	Negative words: []
+Positive	Review: An absolute joy to watch, highly recommended.	Positive words: [joy, recommended]	Negative words: []
+Positive	Review: A must-watch, I was completely blown away by the storytelling.	Positive words: [must-watch]	Negative words: []
+Positive	Review: An extraordinary film that kept me hooked till the end.	Positive words: [extraordinary]	Negative words: []
+Positive	Review: Wonderful cinematography and great acting.	Positive words: [wonderful]	Negative words: []
+Positive	Total count: 9
